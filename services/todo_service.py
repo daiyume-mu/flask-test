@@ -15,6 +15,7 @@ def get_post_by_id(id):
 
 def toDatetime(due):
     return datetime.strptime(due, '%Y-%m-%d')
+
 def update_post(id, title, detail, due):
     post = get_post_by_id(id)
     post.title = title

@@ -8,7 +8,7 @@ def index():
     posts = todo_service.get_all_posts()
     return render_template('index.html', posts=posts)
 
-@todo_blueprint.route('/store')
+@todo_blueprint.route('/store', methods=['POST'])
 def store():
     title = request.form.get('title')
     detail = request.form.get('detail')
@@ -30,20 +30,23 @@ def delete(id):
     todo_service.delete_post(id)
     return redirect('/')
 
-@todo_blueprint.route('/update/<int:id>')
+@todo_blueprint.route('/update/<int:id>', methods=['POST'])
 def update(id):
     
-    title = request.form.get('title')
-    detail = request.form.get('detail')
-    due = request.form.get('due')
-    
-    #早期リターンとは何が存在してれば、処理を走らせるって書くのではなく、何が存在してなかったら処理を終わらせるというコードを先に書くこと。これにより、ちゃんとしてた時に走るコードが長ければ長いほどみやすくなる。
-    if not title and detail and due:  # Make sure all variables have values
+    data = request.form
+    title = data.get('title')
+    detail = data.get('detail')
+    due = data.get('due')
+
+    print(id, title, detail, due)#早期リターンとは何が存在してれば、処理を走らせるって書くのではなく、何が存在してなかったら処理を終わらせるというコードを先に書くこと。これにより、ちゃんとしてた時に走るコードが長ければ長いほどみやすくなる。
+    if not id or not title or not detail or not due:  # Make sure all variables have values
         return "Error: Missing required fields", 400
     try:
+        #print(id, title, detail, due)
         todo_service.update_post(id, title, detail, due)  # Pass all required arguments here
         return redirect('/')
-    except:
+    except Exception as e:
+        print(e) 
         return "Error: Something went wrong", 500
 
 @todo_blueprint.route('/edit/<int:id>')
