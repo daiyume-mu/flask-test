@@ -6,5 +6,16 @@
 <h2>{{ post.title }}</h2>
 <p>{{ post.detail }}</p>
 <p>{{ post.due.date() }}</p>
-
+{% for comment in post.comments %}
+    <h2>№ : {{ comment.id }}</h2>
+    <p>{{ comment.content }}({{ comment.content_timestamp }})</p>
+{% endfor %}
+<div class="form">
+    <form action="/add_comment" method="POST">
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <label for="comment">コメント</label>
+        <input type="text" name="comment">
+        <input type="submit" value="Create">
+    </form>
+</div>
 {% endblock %}
