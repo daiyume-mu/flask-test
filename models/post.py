@@ -8,3 +8,4 @@ class Post(db.Model):
     detail = db.Column(db.String(100))
     due = db.Column(db.DateTime, nullable=False)
 
+    comments = db.relationship('Comment', backref='post')
