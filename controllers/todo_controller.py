@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, redirect
 from services import todo_service
-from datetime import datetime
 
 todo_blueprint = Blueprint('todo', __name__)
 
@@ -55,15 +54,3 @@ def update(id):
 def edit(id):
     post = todo_service.get_post_by_id(id)
     return render_template('update.html', post=post)
-
-@todo_blueprint.route('/create_comment')
-def create_comment():
-    return render_template('create_comment.html')
-
-@todo_blueprint.route('/add_comment', methods=['POST'])
-def add_comments():
-    comment_timestamp = datetime.now()
-    comment = request.form.get('comment')
-    post_id = request.form.get('post_id')
-    todo_service.comment_post(post_id, comment, comment_timestamp)
-    return redirect(f'/detail/{post_id}')
