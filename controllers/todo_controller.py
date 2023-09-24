@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect
 from services import todo_service
+from services import tag_service
 
 todo_blueprint = Blueprint('todo', __name__)
 
@@ -10,10 +11,15 @@ def index():
 
 @todo_blueprint.route('/store', methods=['POST'])
 def store():
-    title = request.form.get('title')
-    detail = request.form.get('detail')
-    due = request.form.get('due')
-    todo_service.create_post(title, detail, due)
+    
+    data = request.form
+    tag_name = data.get('tag')
+    tag = tag_service.create_tag(tag_name)
+    title = data.get('title')
+    detail = data.get('detail')
+    due = data.get('due')
+    todo_service.create_post(title, detail, due, tag_id=tag.id)
+
     return redirect('/')
     
 @todo_blueprint.route('/create')
@@ -23,8 +29,7 @@ def create():
 @todo_blueprint.route('/detail/<int:id>')
 def read(id):
     post= todo_service.get_post_by_id(id)
-    comments = post.comments
-    return render_template('detail.html', post=post, comments=comments)
+    return render_template('detail.html', post=post)
 
 @todo_blueprint.route('/delete/<int:id>')
 def delete(id):
@@ -35,6 +40,7 @@ def delete(id):
 def update(id):
     
     data = request.form
+    tag_name = data.get('tag')
     title = data.get('title')
     detail = data.get('detail')
     due = data.get('due')
@@ -43,8 +49,8 @@ def update(id):
     if not id or not title or not detail or not due:  # Make sure all variables have values
         return "Error: Missing required fields", 400
     try:
-        #print(id, title, detail, due)
-        todo_service.update_post(id, title, detail, due)  # Pass all required arguments here
+        tag = tag_service.update_tag(tag_name)
+        todo_service.update_post(id, title, detail, due, tag_id=tag.id) 
         return redirect('/')
     except Exception as e:
         print(e) 
@@ -54,3 +60,9 @@ def update(id):
 def edit(id):
     post = todo_service.get_post_by_id(id)
     return render_template('update.html', post=post)
+
+@todo_blueprint.route('/tag_list/<int:tag_id>')
+def tag_list(tag_id):
+    posts = tag_service.get_posts_by_tag_id(tag_id)
+    print(posts)
+    return render_template('tag_list.html', posts=posts)

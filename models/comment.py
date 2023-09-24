@@ -7,4 +7,4 @@ class Comment(db.Model):
     content = db.Column(db.String(500))
     content_timestamp = db.Column(db.DateTime, nullable=False)
 
-    posts = db.relationship('Post', back_populates='comments')
+    #posts = db.relationship('Post', back_populates='comments')
