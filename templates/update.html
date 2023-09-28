@@ -5,7 +5,7 @@
 <div class="form">
     <form action="/update/{{ post.id }}" method='POST'>
         <label for="title">Tag</label>
-        <input type="text" name="tag" value={{ post.tag.tag_name }}>
+        <input type="text" name="tag" value={{ post.tags.tag_name }}>
         <label for="title">Title</label>
         <input type="text" name="title" value={{ post.title }}>
         <label for="detail">Detail</label>

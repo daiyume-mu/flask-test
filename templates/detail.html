@@ -6,7 +6,9 @@
 <h2>タイトル : {{ post.title }}</h2>
 <p>詳細 : {{ post.detail }}</p>
 <p>期限 : {{ post.due.date() }}</p>
-<p>tag : {{ post.tag.tag_name }}</p>
+{% if post.tags %}
+    <p>タグ : {{ post.tags[0].tag_name }}</p>
+{% endif %}
 <a href="/edit/{{ post.id }}" role="button">Update</a>
 <a href="/delete/{{ post.id }}" role="button">Delete</a>
 {% for comment in post.comments %}

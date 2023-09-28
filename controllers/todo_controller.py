@@ -14,12 +14,12 @@ def store():
     
     data = request.form
     tag_name = data.get('tag')
-    tag = tag_service.create_tag(tag_name)
     title = data.get('title')
     detail = data.get('detail')
     due = data.get('due')
-    todo_service.create_post(title, detail, due, tag_id=tag.id)
-
+    tag = tag_service.create_tag(tag_name)
+    todo_service.create_post(title, detail, due, tag)
+    
     return redirect('/')
     
 @todo_blueprint.route('/create')
@@ -49,8 +49,9 @@ def update(id):
     if not id or not title or not detail or not due:  # Make sure all variables have values
         return "Error: Missing required fields", 400
     try:
-        tag = tag_service.update_tag(tag_name)
-        todo_service.update_post(id, title, detail, due, tag_id=tag.id) 
+        post = todo_service.update_post(id, title, detail, due)
+        tag_service.update_tag(post, tag_name)
+         
         return redirect('/')
     except Exception as e:
         print(e) 

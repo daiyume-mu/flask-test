@@ -6,7 +6,9 @@
 {% for post in posts %}
     <h2>タイトル : {{ post.title }}</h2>
     <p>期限 : {{ post.due.date() }}</p>
-    <p>tag : <a href="/tag_list/{{ post.tag_id }}">{{ post.tag.tag_name }}</a></p>
+    {% for tag in post.tags %}
+        <p>tag : <a href="/tag_list/{{ tag.id }}">{{ tag.tag_name }}</a></p>
+    {% endfor %}
     <a href="/detail/{{ post.id }}" role="button">Detail</a>
     <a href="/edit/{{ post.id }}" role="button">Update</a>
     <a href="/delete/{{ post.id }}" role="button">Delete</a>
