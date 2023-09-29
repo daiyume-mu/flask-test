@@ -13,9 +13,6 @@ def create_tag(tag_name):
         return new_tag
 
 def update_tag(post, tag_name):
-    if post.tags:
-        post.tags.clear()
-    
     existing_tag = Tag.query.filter_by(tag_name=tag_name).first()
     
     if existing_tag is not None:
@@ -30,3 +27,7 @@ def update_tag(post, tag_name):
 def get_posts_by_tag_id(tag_id):
     posts = Post.query.options(db.joinedload(Post.tags)).order_by((Post.due)).all()
     return posts
+
+def tag_clear(post):
+    if post.tags:
+        post.tags.clear()

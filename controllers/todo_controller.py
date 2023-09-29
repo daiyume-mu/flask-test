@@ -50,6 +50,7 @@ def update(id):
         return "Error: Missing required fields", 400
     try:
         post = todo_service.update_post(id, title, detail, due)
+        tag_service.tag_clear(post)
         tag_service.update_tag(post, tag_name)
          
         return redirect('/')
