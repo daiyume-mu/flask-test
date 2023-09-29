@@ -17,9 +17,9 @@ def store():
     title = data.get('title')
     detail = data.get('detail')
     due = data.get('due')
-    tag = tag_service.create_tag(tag_name)
-    todo_service.create_post(title, detail, due, tag)
-    
+    post = todo_service.create_post(title, detail, due)
+    tag_service.create_tag(post, tag_name)
+
     return redirect('/')
     
 @todo_blueprint.route('/create')

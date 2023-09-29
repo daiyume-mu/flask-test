@@ -12,10 +12,9 @@ def get_all_posts():
     
     return Post.query.options(db.joinedload(Post.tags)).order_by((Post.due)).all()
 
-def create_post( title, detail, due, tag):
+def create_post( title, detail, due):
     convertedDue = toDatetime(due)
     new_post = Post(title=title, detail=detail, due=convertedDue)
-    new_post.tags.append(tag)
     db.session.add(new_post)
     db.session.commit()
     return new_post
