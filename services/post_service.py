@@ -4,15 +4,16 @@ from models.tag import Tag, db
 from sqlalchemy import desc
 
 def get_all_posts():
-    """for post in Post.query.options(db.joinedload(Post.tags)).all():
-        if post.tag is not None:
-            print(post.tag.tag_name)  
-        else:
-            print(f'Post ID {post.id} has no associated tag')"""
+    for post in Post.query.options(db.joinedload(Post.tags)).all():
+        print(post)
+        if post.tags:
+            for tag in post.tags:
+                print(tag.tag_name)
+            print(f'Post ID {post.id} has no associated tag')
     
     return Post.query.options(db.joinedload(Post.tags)).order_by((Post.due)).all()
 
-def create_post( title, detail, due):
+def create_post(title, detail, due):
     convertedDue = toDatetime(due)
     new_post = Post(title=title, detail=detail, due=convertedDue)
     db.session.add(new_post)

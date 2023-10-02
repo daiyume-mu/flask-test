@@ -3,8 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from models.post import db
 from models.tag import db
 from models.comment import db
-from controllers.todo_controller import todo_blueprint
+from controllers.post_controller import post_blueprint
 from controllers.comment_controller import comment_blueprint
+from controllers.tag_controller import tag_blueprint
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
@@ -12,5 +13,6 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 db.init_app(app)
 
-app.register_blueprint(todo_blueprint)
+app.register_blueprint(post_blueprint)
 app.register_blueprint(comment_blueprint)
+app.register_blueprint(tag_blueprint)
