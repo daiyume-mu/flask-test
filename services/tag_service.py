@@ -1,31 +1,32 @@
 from models.tag import Tag, db
 from models.post import Post,post_tag, db
 from sqlalchemy import desc
-    
+from sqlalchemy.orm import joinedload
+
 def get_posts_by_tag_id(tag_id):
-    posts = Post.query.options(db.joinedload(Post.tags)).order_by((Post.due)).all()
+    posts = Post.query.join(Post.tags).filter(Tag.id == tag_id).options(joinedload(Post.tags)).order_by(Post.due).all()
     return posts
+
+def create_tag(tag):
+    new_tag = Tag(tag_name=tag)
+    db.session.add(new_tag)
+    db.session.commit()
+    return new_tag
+
+def get_all_tags():
+    return Tag.query.all()
+
+def associate_tags(post, tag_id):
+    tags = Tag.query.filter(Tag.id.in_(tag_id)).all()
+    post.tags.extend(tags)
+    db.session.commit()
+    print(tags)
 
 def tag_clear(post):
     if post.tags:
         post.tags.clear()
 
-def find_or_create_tag(tag_name):
-    existing_tag = Tag.query.filter_by(tag_name=tag_name).first()
-    if existing_tag is not None:
-        return existing_tag
-    else:
-        new_tag = Tag(tag_name=tag_name)
-        db.session.add(new_tag)
-        db.session.commit()
-        return new_tag
-    
-def tag_post_associate(post, tag):
-    post.tags.append(tag)
-    db.session.commit()
 
-def create_tag(post, tag_name):
-    tag = find_or_create_tag(tag_name)
-    tag_post_associate(post, tag)
-
-update_tag = create_tag
+#associateするだけの関数を作る
+#addするだけの関数を作る
+#modelのりファクタは後で教えるからいい
