@@ -6,8 +6,11 @@ from models.comment import db
 from controllers.post_controller import post_blueprint
 from controllers.comment_controller import comment_blueprint
 from controllers.tag_controller import tag_blueprint
+import secrets
+
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 app.config['SQLALCHEMY_ECHO'] = True
 

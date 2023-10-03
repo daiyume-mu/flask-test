@@ -8,7 +8,7 @@ def add_tag():
     tag = request.form.get('tag')
     print(tag)
     if not add_tag_request.is_unique_tag(tag):
-        print(f"Tag '{tag}' already exists.", 'error')
+        flash(f"Tag '{tag}' already exists.", 'error')
         return render_template('create_tag.html')
     tag_service.create_tag(tag)
     return redirect('/')
