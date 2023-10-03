@@ -17,8 +17,8 @@ def add_tag():
 def create_tag():
     return render_template('create_tag.html')
 
-@tag_blueprint.route('/tag_list/<int:tag_id>')
+@tag_blueprint.route('/tag_post_list/<int:tag_id>')
 def tag_list(tag_id):
     posts = tag_service.get_posts_by_tag_id(tag_id)
     print(posts)
-    return render_template('tag_list.html', posts=posts)
+    return render_template('tag_post_list.html', posts=posts)

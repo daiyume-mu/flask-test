@@ -8,10 +8,16 @@
     <h2>タイトル : {{ post.title }}</h2>
     <p>期限 : {{ post.due.date() }}</p>
     {% for tag in post.tags %}
-        <p>tag : <a href="/tag_list/{{ tag.id }}">{{ tag.tag_name }}</a></p>
+        <p>tag : <a href="/tag_post_list/{{ tag.id }}">{{ tag.tag_name }}</a></p>
     {% endfor %}
     <a href="/detail/{{ post.id }}" role="button">Detail</a>
     <a href="/edit/{{ post.id }}" role="button">Update</a>
     <a href="/delete/{{ post.id }}" role="button">Delete</a>
+{% endfor %}
+<br>
+<br>
+<p>タグ一覧</p>
+{% for tag in tags %}
+    <a href="/tag_post_list/{{ tag.id }}">{{ tag.tag_name }}</a>
 {% endfor %}
 {% endblock %}

@@ -7,7 +7,8 @@ post_blueprint = Blueprint('todo', __name__)
 @post_blueprint.route('/')
 def index():
     posts = post_service.get_all_posts()
-    return render_template('index.html', posts=posts)
+    tags = tag_service.get_all_tags()
+    return render_template('index.html', posts=posts, tags=tags)
 
 @post_blueprint.route('/store', methods=['POST'])
 def store():
