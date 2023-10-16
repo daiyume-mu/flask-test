@@ -1,10 +1,16 @@
 from models.tag import Tag, db
-from models.post import Post,post_tag, db
+from models.post import Post,post_tag, post_user, db
 from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
 
-def get_posts_by_tag_id(tag_id):
-    posts = Post.query.join(Post.tags).filter(Tag.id == tag_id).options(joinedload(Post.tags)).order_by(Post.due).all()
+def get_posts_by_tag_id(tag_id, user_id):
+    posts = posts = (Post.query
+             .join(Post.tags)
+             .join(post_user, Post.id == post_user.c.post_id)
+             .filter(Tag.id == tag_id, post_user.c.user_id == user_id)
+             .options(joinedload(Post.tags))
+             .order_by(Post.due)
+             .all())
     return posts
 
 def create_tag(tag):

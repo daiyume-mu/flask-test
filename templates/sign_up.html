@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="form">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <form action="/register" method="POST">
+        <label for="email">メールアドレス</label>
+        <input type="text" name="email">
+        <label for="password">パスワード</label>
+        <input type="text" name="password">
+        <input type="submit" value="登録">
+    </form>
+</div>
+{% endblock %}

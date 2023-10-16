@@ -2,22 +2,28 @@
 
 {% block body %}
 <h1>トップページ</h1>
-<a href="/create_tag" role="button">CREATE NEW TAG</a>
-<a href="/create" role="button">CREATE NEW TASK</a>
-{% for post in posts %}
-    <h2>タイトル : {{ post.title }}</h2>
-    <p>期限 : {{ post.due.date() }}</p>
-    {% for tag in post.tags %}
-        <p>tag : <a href="/tag_post_list/{{ tag.id }}">{{ tag.tag_name }}</a></p>
+{% if not user %}
+    <a href="/login" role="button">ログイン</a>
+{% else %}
+    <a href="/logout" role="button">ログアウト</a>
+    <br>
+    <a href="/create_tag" role="button">CREATE NEW TAG</a>
+    <a href="/create" role="button">CREATE NEW TASK</a>
+    {% for post in posts %}
+        <h2>タイトル : {{ post.title }}</h2>
+        <p>期限 : {{ post.due.date() }}</p>
+        {% for tag in post.tags %}
+            <p>tag : <a href="/tag_post_list/{{ tag.id }}">{{ tag.tag_name }}</a></p>
+        {% endfor %}
+        <a href="/detail/{{ post.id }}" role="button">Detail</a>
+        <a href="/edit/{{ post.id }}" role="button">Update</a>
+        <a href="/delete/{{ post.id }}" role="button">Delete</a>
     {% endfor %}
-    <a href="/detail/{{ post.id }}" role="button">Detail</a>
-    <a href="/edit/{{ post.id }}" role="button">Update</a>
-    <a href="/delete/{{ post.id }}" role="button">Delete</a>
-{% endfor %}
-<br>
-<br>
-<p>タグ一覧</p>
-{% for tag in tags %}
-    <a href="/tag_post_list/{{ tag.id }}">{{ tag.tag_name }}</a>
-{% endfor %}
+    <br>
+    <br>
+    <p>タグ一覧</p>
+    {% for tag in tags %}
+        <a href="/tag_post_list/{{ tag.id }}">{{ tag.tag_name }}</a>
+    {% endfor %}
+{% endif %}
 {% endblock %}

@@ -1,9 +1,9 @@
 from datetime import datetime
-from models.post import Post, db
+from models.post import Post, post_user, db
 from models.tag import Tag, db
 from sqlalchemy import desc
 
-def get_all_posts():
+def get_all_posts(user_id):
     for post in Post.query.options(db.joinedload(Post.tags)).all():
         print(post)
         if post.tags:
@@ -11,11 +11,16 @@ def get_all_posts():
                 print(tag.tag_name)
             print(f'Post ID {post.id} has no associated tag')
     
-    return Post.query.options(db.joinedload(Post.tags)).order_by((Post.due)).all()
-
-def create_post(title, detail, due):
+    return (Post.query
+         .join(post_user, Post.id == post_user.c.post_id) # post_userを直接使用
+         .filter(post_user.c.user_id == user_id)
+         .options(db.joinedload(Post.tags))
+         .order_by(Post.due)
+         .all())
+def create_post(title, detail, due, user):
     convertedDue = toDatetime(due)
     new_post = Post(title=title, detail=detail, due=convertedDue)
+    new_post.users.append(user)
     db.session.add(new_post)
     db.session.commit()
     return new_post
