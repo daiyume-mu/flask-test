@@ -1,15 +1,21 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<h2>詳細</h2>
+<h2>詳細ページ</h2>
 
-<h2>{{ post.title }}</h2>
-<p>{{ post.detail }}</p>
-<p>{{ post.due.date() }}</p>
+<h2>タイトル : {{ post.title }}</h2>
+<p>詳細 : {{ post.detail }}</p>
+<p>期限 : {{ post.due.date() }}</p>
+{% for tag in post.tags %}
+    <p>タグ : {{ tag.tag_name }}</p>
+{% endfor %}
+<a href="/edit/{{ post.id }}" role="button">Update</a>
+<a href="/delete/{{ post.id }}" role="button">Delete</a>
 {% for comment in post.comments %}
     <h2>№ : {{ comment.id }}</h2>
     <p>{{ comment.content }}({{ comment.content_timestamp }})</p>
 {% endfor %}
+
 <div class="form">
     <form action="/add_comment" method="POST">
         <input type="hidden" name="post_id" value="{{ post.id }}">
