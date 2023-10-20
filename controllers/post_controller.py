@@ -1,19 +1,24 @@
 from flask import Blueprint, render_template, request, redirect
-from services import post_service
-from services import tag_service
-from services import user_service
+from services.post_service import PostService
+from services.tag_service import TagService
+from services.user_service import UserService
+from models.post import db
+
 
 post_blueprint = Blueprint('todo', __name__)
+postservice = PostService(db.session)
+tagservice = TagService(db.session)
+userservice = UserService(db.session)
 
 @post_blueprint.route('/')
 def index():
     user_id = request.cookies.get('user_id')
-    user = user_service.get_current_user(user_id)
+    user = userservice.get_current_user(user_id)
     print(user)
     if not user:
         return redirect('/login')
-    posts = post_service.get_all_posts(user_id)
-    tags = tag_service.get_all_tags()
+    posts = postservice.get_all_posts(user_id)
+    tags = tagservice.get_all_tags()
     return render_template('index.html', posts=posts, tags=tags, user=user)
 
 @post_blueprint.route('/store', methods=['POST'])
@@ -25,26 +30,26 @@ def store():
     detail = data.get('detail')
     due = data.get('due')
     tag_id = request.form.getlist('tag_id')
-    user = user_service.get_current_user(user_id)
+    user = userservice.get_current_user(user_id)
     if not user:
         return redirect('/login')
-    post = post_service.create_post(title, detail, due, user)
-    tag_service.associate_tags(post, tag_id)
+    post = postservice.create_post(title, detail, due, user)
+    tagservice.associate_tags(post, tag_id)
     return redirect('/')
     
 @post_blueprint.route('/create')
 def create():
-    tags = tag_service.get_all_tags()
+    tags = tagservice.get_all_tags()
     return render_template('create.html', tags=tags)
 
 @post_blueprint.route('/detail/<int:id>')
 def read(id):
-    post= post_service.get_post_by_id(id)
+    post= postservice.get_post_by_id(id)
     return render_template('detail.html', post=post)
 
 @post_blueprint.route('/delete/<int:id>')
 def delete(id):
-    post_service.delete_post(id)
+    postservice.delete_post(id)
     return redirect('/')
 
 @post_blueprint.route('/update/<int:id>', methods=['POST'])
@@ -60,9 +65,9 @@ def update(id):
     if not id or not title or not detail or not due: 
         return "Error: Missing required fields", 400
     try:
-        post = post_service.update_post(id, title, detail, due)
-        tag_service.tag_clear(post)
-        tag_service.associate_tags(post, tag_id)
+        post = postservice.update_post(id, title, detail, due)
+        tagservice.tag_clear(post)
+        tagservice.associate_tags(post, tag_id)
          
         return redirect('/')
     except Exception as e:
@@ -71,7 +76,7 @@ def update(id):
 
 @post_blueprint.route('/edit/<int:id>')
 def edit(id):
-    post = post_service.get_post_by_id(id)
-    tags = tag_service.get_all_tags()
+    post = postservice.get_post_by_id(id)
+    tags = tagservice.get_all_tags()
     return render_template('update.html', post=post, tags=tags)
 

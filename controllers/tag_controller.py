@@ -1,9 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, flash
-from services import tag_service
+from services.tag_service import TagService
+from services.user_service import UserService
 from request import add_tag_request
-from services import user_service
+from models.post import db
 
 tag_blueprint = Blueprint('tag', __name__)
+tagservice = TagService(db.session)
+userservice = UserService(db.session)
 
 @tag_blueprint.route('/add_tag', methods=['POST'])
 def add_tag():
@@ -12,7 +15,7 @@ def add_tag():
     if not add_tag_request.is_unique_tag(tag):
         flash(f"Tag '{tag}' already exists.", 'error')
         return render_template('create_tag.html')
-    tag_service.create_tag(tag)
+    tagservice.create_tag(tag)
     return redirect('/')
 
 @tag_blueprint.route('/create_tag')
@@ -22,9 +25,9 @@ def create_tag():
 @tag_blueprint.route('/tag_post_list/<int:tag_id>')
 def tag_list(tag_id):
     user_id = request.cookies.get('user_id')
-    user = user_service.get_current_user(user_id)
+    user = userservice.get_current_user(user_id)
     if not user:
         return redirect('/login')
-    posts = tag_service.get_posts_by_tag_id(tag_id, user_id)
+    posts = tagservice.get_posts_by_tag_id(tag_id, user_id)
     print(posts)
     return render_template('tag_post_list.html', posts=posts)
