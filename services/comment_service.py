@@ -1,7 +1,12 @@
-from models.comment import Comment, db
+from models.comment import Comment
 
+class CommentService:
 
-def comment_post(post_id, content, content_timestamp):
-    new_comment = Comment(post_id=post_id, content=content, content_timestamp=content_timestamp)
-    db.session.add(new_comment)
-    db.session.commit()
+    def __init__(self, db_session):
+        self.db_session = db_session
+
+    def comment_post(self, post_id, content, content_timestamp):
+        new_comment = Comment(post_id=post_id, content=content, content_timestamp=content_timestamp)
+        self.db_session.add(new_comment)
+        self.db_session.commit()
+

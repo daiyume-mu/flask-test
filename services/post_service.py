@@ -3,48 +3,48 @@ from models.post import Post, post_user, db
 from models.tag import Tag, db
 from sqlalchemy import desc
 
-def get_all_posts(user_id):
-    for post in Post.query.options(db.joinedload(Post.tags)).all():
-        print(post)
-        if post.tags:
-            for tag in post.tags:
-                print(tag.tag_name)
-            print(f'Post ID {post.id} has no associated tag')
-    
-    return (Post.query
-         .join(post_user, Post.id == post_user.c.post_id) # post_userを直接使用
-         .filter(post_user.c.user_id == user_id)
-         .options(db.joinedload(Post.tags))
-         .order_by(Post.due)
-         .all())
-def create_post(title, detail, due, user):
-    convertedDue = toDatetime(due)
-    new_post = Post(title=title, detail=detail, due=convertedDue)
-    new_post.users.append(user)
-    db.session.add(new_post)
-    db.session.commit()
-    return new_post
+class PostService:
+    def __init__(self, db_session):
+        self.db_session = db_session
 
-def get_post_by_id(id):
-    return Post.query.get(id)
+    def get_all_posts(self, user_id):
+        for post in self.db_session.query(Post).options(db.joinedload(Post.tags)).all():
+            print(post)
+            if post.tags:
+                for tag in post.tags:
+                    print(tag.tag_name)
+                print(f'Post ID {post.id} has no associated tag')
 
-def toDatetime(due):
-    return datetime.strptime(due, '%Y-%m-%d')
+        return (self.db_session.query(Post)
+                 .join(post_user, Post.id == post_user.c.post_id)
+                 .filter(post_user.c.user_id == user_id)
+                 .options(db.joinedload(Post.tags))
+                 .order_by(Post.due)
+                 .all())
 
-def update_post(id, title, detail, due):
-    post = get_post_by_id(id)
-    post.title = title
-    post.detail = detail
-    post.due = datetime.strptime(due, '%Y-%m-%d')
-    db.session.commit()
-    return post
+    def create_post(self, title, detail, due, user):
+        converted_due = self._to_datetime(due)
+        new_post = Post(title=title, detail=detail, due=converted_due)
+        new_post.users.append(user)
+        self.db_session.add(new_post)
+        self.db_session.commit()
+        return new_post
 
-def delete_post(id):
-    post = get_post_by_id(id)
-    db.session.delete(post)
-    db.session.commit()
+    def get_post_by_id(self, id):
+        return self.db_session.query(Post).get(id)
 
-"""def create_posttag(post_id, tag_id):
-    new_posttag = PostTag(post_id=post_id, tag_id=tag_id)
-    db.session.add(new_posttag)
-    db.session.commit()"""
+    def update_post(self, id, title, detail, due):
+        post = self.get_post_by_id(id)
+        post.title = title
+        post.detail = detail
+        post.due = self._to_datetime(due)
+        self.db_session.commit()
+        return post
+
+    def delete_post(self, id):
+        post = self.get_post_by_id(id)
+        self.db_session.delete(post)
+        self.db_session.commit()
+
+    def _to_datetime(self, due):
+        return datetime.strptime(due, '%Y-%m-%d')
