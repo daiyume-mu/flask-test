@@ -1,4 +1,4 @@
-from models.tag import Tag, db
+"""from models.tag import Tag, db
 from models.post import Post,post_tag, post_user, db
 from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
@@ -35,7 +35,7 @@ class TagService:
 
     def tag_clear(self, post):
         if post.tags:
-            post.tags.clear()
+            post.tags.clear()"""
 
 #associateするだけの関数を作る
 #addするだけの関数を作る

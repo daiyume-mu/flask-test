@@ -1,13 +1,13 @@
 from flask import Blueprint, render_template, request, redirect
 from services.post_service import PostService
-from services.tag_service import TagService
+from models.tag import TagModel
 from services.user_service import UserService
 from models.post import db
 
 
 post_blueprint = Blueprint('todo', __name__)
 postservice = PostService(db.session)
-tagservice = TagService(db.session)
+tagservice = TagModel(db.session)
 userservice = UserService(db.session)
 
 @post_blueprint.route('/')

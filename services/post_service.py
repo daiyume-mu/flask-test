@@ -23,7 +23,7 @@ class PostService:
                  .all())
 
     def create_post(self, title, detail, due, user):
-        converted_due = self._to_datetime(due)
+        converted_due = self.to_datetime(due)
         new_post = Post(title=title, detail=detail, due=converted_due)
         new_post.users.append(user)
         self.db_session.add(new_post)
@@ -37,7 +37,7 @@ class PostService:
         post = self.get_post_by_id(id)
         post.title = title
         post.detail = detail
-        post.due = self._to_datetime(due)
+        post.due = self.to_datetime(due)
         self.db_session.commit()
         return post
 
@@ -46,5 +46,5 @@ class PostService:
         self.db_session.delete(post)
         self.db_session.commit()
 
-    def _to_datetime(self, due):
+    def to_datetime(self, due):
         return datetime.strptime(due, '%Y-%m-%d')
