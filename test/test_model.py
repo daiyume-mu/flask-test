@@ -1,4 +1,4 @@
-import unittest
+"""import unittest
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from models.post import Post, db
@@ -38,4 +38,4 @@ class TestModel(unittest.TestCase):
 
     def tearDown(self):
         with self.app.app_context():
-            db.drop_all()
+            db.drop_all()"""

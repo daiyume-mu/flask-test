@@ -1,15 +1,31 @@
 import sys
 sys.path.append('D:/file/flask-todo-app/develop')
 import bcrypt
-from models.user import User
+from flask import Flask
+from datetime import datetime
 from models.post import Post, db
+from models.comment import Comment
+from models.tag import Tag
+from models.user import User
 from services.user_service import UserService
-from test_model import TestModel
 import unittest
 
 userservice = UserService(db.session)
 
-class Test_UserService(TestModel):
+class Test_UserService(unittest.TestCase):
+
+    def setUp(self):
+        self.app = Flask(__name__)
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db' 
+        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        db.init_app(self.app)
+
+        with self.app.app_context():
+            db.create_all()
+
+    def tearDown(self):
+        with self.app.app_context():
+            db.drop_all()
     
     def test_hash_password(self):
         password = "test_password"
@@ -26,28 +42,40 @@ class Test_UserService(TestModel):
 
     def test_register_user(self):
         with self.app.app_context():
-            email = "test2@example.com"
-            password = "password456"
+            email = "test2example.com"
+            password = "password123"
             first_count = User.query.count()
             userservice.register_user(email, password)
             new_count = User.query.count()
             self.assertEqual(new_count, first_count + 1)
 
+            db.session.rollback()
+
     def test_get_user(self):
         with self.app.app_context():
+            user_test = User(email="test@example.com", password="password123")
+            db.session.add(user_test)
+            
             email = "test@example.com"
             user = userservice.get_user(email)
             self.assertIsNotNone(user)
             self.assertEqual(user.email, "test@example.com")
             self.assertEqual(user.password, "password123")
 
+            db.session.rollback()
+
     def test_get_current_user(self):
         with self.app.app_context():
+            user_test = User(email="test@example.com", password="password123")
+            db.session.add(user_test)
+            
             user_id = 1
             user = userservice.get_current_user(user_id)
             self.assertIsNotNone(user)
             self.assertEqual(user.email, "test@example.com")
             self.assertEqual(user.password, "password123")
+
+            db.session.rollback()
 
 if __name__ == '__main__':
     unittest.main()
