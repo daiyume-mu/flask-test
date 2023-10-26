@@ -7,9 +7,10 @@ from models.comment import Comment
 from models.tag import Tag
 from models.user import User
 from services.comment_service import CommentService
+from services.post_service import PostService
 import unittest
 
-
+postservice = PostService(db.session)
 commentservice = CommentService(db.session)
 
 class Test_CommentService(unittest.TestCase):
@@ -29,10 +30,10 @@ class Test_CommentService(unittest.TestCase):
 
     def test_comment_post(self):
         with self.app.app_context():
-            converted_due = datetime.strptime("2023-10-20", '%Y-%m-%d')
-            post_test = Post(title="Test", detail="Test Detail", due=converted_due)
-            db.session.add(post_test)
-            db.session.commit()
+            title = "Test"
+            detail = "Test Detail"
+            due = "2023-10-20"
+            postservice.create_post(title, detail, due)
             
             post_id = 1 
             content = "test comment"

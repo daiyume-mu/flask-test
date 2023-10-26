@@ -7,9 +7,13 @@ from models.user import User
 from models.tag import Tag, TagModel
 from models.post import Post,db
 from models.comment import Comment
+from services.post_service import PostService
+from services.user_service import UserService
 from datetime import datetime
 
+postservice = PostService(db.session)
 tagservice = TagModel(db.session)
+userservice = UserService(db.session)
 
 class Test_TagService(unittest.TestCase):
 
@@ -28,17 +32,19 @@ class Test_TagService(unittest.TestCase):
     
     def test_get_post_by_id(self):
         with self.app.app_context():
-            user_test = User(email="test@example.com", password="password123")
-            db.session.add(user_test)
+            email = "test@example.com"
+            password = "password123"
+            user_test = userservice.register_user(email, password)
 
-            tag_test = Tag(tag_name="SampleTag")
-            db.session.add(tag_test)
+            tag="SampleTag"
+            tag_test = tagservice.create_tag(tag)
             tag_list = [tag_test]
             
-            converted_due = datetime.strptime("2023-10-20", '%Y-%m-%d')
-            post_test = Post(title="Test", detail="Test Detail", due=converted_due)
-            db.session.add(post_test)
-            post_test.users.append(user_test)
+            title = "Test"
+            detail = "Test Detail"
+            due = "2023-10-20"
+            post_test = postservice.create_post(title, detail, due)
+            postservice.associate_user(post_test, user_test)
             post_test.tags.extend(tag_list)
             db.session.commit()
 
@@ -50,6 +56,7 @@ class Test_TagService(unittest.TestCase):
             self.assertEqual(posts[0].title, "Test")
 
             db.session.rollback()
+
 
     def test_create_tag(self):
         with self.app.app_context():
@@ -64,10 +71,11 @@ class Test_TagService(unittest.TestCase):
 
             db.session.rollback()
 
+
     def test_get_all_tags(self):
         with self.app.app_context():
-            tag_test = Tag(tag_name="SampleTag")
-            db.session.add(tag_test)
+            tag="SampleTag"
+            tagservice.create_tag(tag)
             
             tag = tagservice.get_all_tags()
             self.assertIsInstance(tag, list)
@@ -75,33 +83,36 @@ class Test_TagService(unittest.TestCase):
 
             db.session.rollback()
 
+
     def test_associate_tags(self):
         with self.app.app_context():
-            converted_due = datetime.strptime("2023-10-20", '%Y-%m-%d')
-            post_test = Post(title="Test", detail="Test Detail", due=converted_due)
-            db.session.add(post_test)
-            db.session.commit()
+            title = "Test"
+            detail = "Test Detail"
+            due = "2023-10-20"
+            postservice.create_post(title, detail, due)
 
             post = Post.query.get(1)
-            tag = Tag(tag_name="SampleTag")
-            db.session.add(tag)
+            tag="SampleTag"
+            tag_test = tagservice.create_tag(tag)
             db.session.commit()
-            self.assertNotIn(tag, post.tags)
-            tagservice.associate_tags(post, [tag.id])
+            self.assertNotIn(tag_test, post.tags)
+            tagservice.associate_tags(post, [tag_test.id])
             new_post = Post.query.get(1)
-            self.assertIn(tag, new_post.tags)
+            self.assertIn(tag_test, new_post.tags)
 
             db.session.rollback()
 
+
     def test_tag_clear(self):
         with self.app.app_context():
-            tag_test = Tag(tag_name="SampleTag")
-            db.session.add(tag_test)
+            tag="SampleTag"
+            tag_test = tagservice.create_tag(tag)
             tag_list = [tag_test]
             
-            converted_due = datetime.strptime("2023-10-20", '%Y-%m-%d')
-            post_test = Post(title="Test", detail="Test Detail", due=converted_due)
-            db.session.add(post_test)
+            title = "Test"
+            detail = "Test Detail"
+            due = "2023-10-20"
+            post_test = postservice.create_post(title, detail, due)
             post_test.tags.extend(tag_list)
             db.session.commit()
 

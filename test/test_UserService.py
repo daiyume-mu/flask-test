@@ -33,12 +33,14 @@ class Test_UserService(unittest.TestCase):
         self.assertIsInstance(hashed_password, bytes)
         self.assertTrue(bcrypt.checkpw(password.encode('utf-8'), hashed_password))
 
+
     def test_verify_password(self):
         original_password = "test_password"
         hashed_password = userservice.hash_password(original_password)
         self.assertTrue(userservice.verify_password(hashed_password, original_password))
         wrong_password = "wrong_password"
         self.assertFalse(userservice.verify_password(hashed_password, wrong_password))
+
 
     def test_register_user(self):
         with self.app.app_context():
@@ -51,29 +53,32 @@ class Test_UserService(unittest.TestCase):
 
             db.session.rollback()
 
+
     def test_get_user(self):
         with self.app.app_context():
-            user_test = User(email="test@example.com", password="password123")
-            db.session.add(user_test)
-            
             email = "test@example.com"
+            password = "password123"
+            userservice.register_user(email, password)
+            
             user = userservice.get_user(email)
             self.assertIsNotNone(user)
             self.assertEqual(user.email, "test@example.com")
-            self.assertEqual(user.password, "password123")
+            self.assertTrue(userservice.verify_password(user.password, password))
 
             db.session.rollback()
 
+
     def test_get_current_user(self):
         with self.app.app_context():
-            user_test = User(email="test@example.com", password="password123")
-            db.session.add(user_test)
+            email = "test@example.com"
+            password = "password123"
+            userservice.register_user(email, password)
             
             user_id = 1
             user = userservice.get_current_user(user_id)
             self.assertIsNotNone(user)
             self.assertEqual(user.email, "test@example.com")
-            self.assertEqual(user.password, "password123")
+            self.assertTrue(userservice.verify_password(user.password, password))
 
             db.session.rollback()
 
