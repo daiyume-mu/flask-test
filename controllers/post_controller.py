@@ -33,7 +33,8 @@ def store():
     user = userservice.get_current_user(user_id)
     if not user:
         return redirect('/login')
-    post = postservice.create_post(title, detail, due, user)
+    post = postservice.create_post(title, detail, due)
+    postservice.associate_user(post, user)
     tagservice.associate_tags(post, tag_id)
     return redirect('/')
     
