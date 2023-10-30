@@ -1,12 +1,16 @@
 from flask import Blueprint, render_template, request, redirect, flash
 from models.tag import TagModel
+from models.user import UserModel
+from services.tag_service import TagService
 from services.user_service import UserService
 from request import add_tag_request
 from models.post import db
 
 tag_blueprint = Blueprint('tag', __name__)
-tagservice = TagModel(db.session)
-userservice = UserService(db.session)
+tagmodel = TagModel(db.session)
+tagservice = TagService(tagmodel)
+usermodel = UserModel(db.session)
+userservice = UserService(usermodel)
 
 @tag_blueprint.route('/add_tag', methods=['POST'])
 def add_tag():

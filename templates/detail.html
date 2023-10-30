@@ -11,8 +11,8 @@
 {% endfor %}
 <a href="/edit/{{ post.id }}" role="button">Update</a>
 <a href="/delete/{{ post.id }}" role="button">Delete</a>
+<h3>コメント</h3>
 {% for comment in post.comments %}
-    <h2>№ : {{ comment.id }}</h2>
     <p>{{ comment.content }}({{ comment.content_timestamp }})</p>
 {% endfor %}
 

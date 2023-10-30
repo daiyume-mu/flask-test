@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, flash, make_response
+from models.user import UserModel
 from services.user_service import UserService
 from request import add_user_request
 from models.post import db
 
 user_blueprint = Blueprint('user', __name__)
-userservice = UserService(db.session)
+usermodel = UserModel(db.session)
+userservice = UserService(usermodel)
 
 @user_blueprint.route('/login')
 def login():
