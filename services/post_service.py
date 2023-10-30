@@ -1,11 +1,13 @@
 from datetime import datetime
-from models.post import Post, post_user, db
+from models.post import Post,PostModel, post_user, db
 from models.tag import Tag, db
 from sqlalchemy import desc
 
 class PostService:
-    def __init__(self, db_session):
-        self.db_session = db_session
+    
+    def __init__(self, repository: PostModel):
+        self.repository = repository
+
 
     def get_all_posts(self, user_id):
         """for post in self.db_session.query(Post).options(db.joinedload(Post.tags)).all():
@@ -15,39 +17,36 @@ class PostService:
                     print(tag.tag_name)
                 print(f'Post ID {post.id} has no associated tag')"""
 
-        return (self.db_session.query(Post)
-                 .join(post_user, Post.id == post_user.c.post_id)
-                 .filter(post_user.c.user_id == user_id)
-                 .options(db.joinedload(Post.tags))
-                 .order_by(Post.due)
-                 .all())
+        return self.repository.get_all_posts(user_id)
+    
 
     def create_post(self, title, detail, due):
         converted_due = self.to_datetime(due)
         new_post = Post(title=title, detail=detail, due=converted_due)
-        self.db_session.add(new_post)
-        self.db_session.commit()
+        self.repository.add_post(new_post)
         return new_post
 
+
     def associate_user(self, post, user):
-        post.users.append(user)
-        self.db_session.commit()
+        self.repository.associate_user(post, user)
         
+
     def get_post_by_id(self, id):
-        return self.db_session.query(Post).get(id)
+        return self.repository.get_post_by_id(id)
+
 
     def update_post(self, id, title, detail, due):
-        post = self.get_post_by_id(id)
+        post = self.repository.get_post_by_id(id)
         post.title = title
         post.detail = detail
         post.due = self.to_datetime(due)
-        self.db_session.commit()
+        self.repository.update_post(post)        
         return post
 
+
     def delete_post(self, id):
-        post = self.get_post_by_id(id)
-        self.db_session.delete(post)
-        self.db_session.commit()
+        self.repository.delete_post_by_id(id)
+
 
     def to_datetime(self, due):
         return datetime.strptime(due, '%Y-%m-%d')

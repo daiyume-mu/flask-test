@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, request, redirect
+from models.comment import CommentModel
 from services.comment_service import CommentService
 from datetime import datetime
 from models.post import db
 
 comment_blueprint = Blueprint('comment', __name__)
-commentservice = CommentService(db.session)
+commentmodel = CommentModel(db.session)
+commentservice = CommentService(commentmodel)
 
 @comment_blueprint.route('/create_comment')
 def create_comment():

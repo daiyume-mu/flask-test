@@ -7,6 +7,7 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tag_name = db.Column(db.String(10), nullable=False)
 
+
 class TagModel:
 
     def __init__(self, db_session):
@@ -22,11 +23,9 @@ class TagModel:
                  .all())
         return posts
     
-    def create_tag(self, tag):
-        new_tag = Tag(tag_name=tag)
-        self.db_session.add(new_tag)
+    def add_tag(self, tag):
+        self.db_session.add(tag)
         self.db_session.commit()
-        return new_tag
 
     def get_all_tags(self):
         return Tag.query.all()
