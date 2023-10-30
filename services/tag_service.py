@@ -28,7 +28,7 @@ class TagService:
 
 
     def tag_clear(self, post):
-        self.repository.tag_clear(self, post)
+        self.repository.tag_clear(post)
 
 #associateするだけの関数を作る
 #addするだけの関数を作る

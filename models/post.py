@@ -19,11 +19,23 @@ class Post(db.Model):
     comments = db.relationship('Comment', backref='post')
     tags = db.relationship('Tag', secondary=post_tag, backref='posts')
     users = db.relationship('User', secondary=post_user, backref='posts')
+    
+
+class Singleton:
+    _instance = None
+    
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+
 
 class PostModel:
 
     def __init__(self, db_session):
-        self.db_session = db_session
+        if not hasattr(self, "db_session"):  
+            self.db_session = db_session
 
 
     def get_all_posts(self, user_id):

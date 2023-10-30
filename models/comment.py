@@ -9,10 +9,21 @@ class Comment(db.Model):
 
     #posts = db.relationship('Post', back_populates='comments')
 
+
+class Singleton:
+    _instance = None
+    
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+
 class CommentModel:
 
     def __init__(self, db_session):
-        self.db_session = db_session
+        if not hasattr(self, "db_session"):  
+            self.db_session = db_session
 
 
     def add_comment(self, comment):
