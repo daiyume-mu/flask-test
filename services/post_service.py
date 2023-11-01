@@ -50,3 +50,26 @@ class PostService:
 
     def to_datetime(self, due):
         return datetime.strptime(due, '%Y-%m-%d')
+    
+
+    def serialize_post(self, post):
+        return {
+            "id": post.id,
+            "title": post.title,
+            "detail": post.detail,
+            "due": post.due.strftime('%Y-%m-%d %H:%M:%S'),
+            "user": {
+                "id": post.user.id,
+                "email": post.user.email  # ユーザーモデルの他の属性もここに追加できます。
+            },
+            "tags": [{
+                "id": tag.id,
+                "tag_name": tag.tag_name  # タグモデルの他の属性もここに追加できます。
+            } for tag in post.tags],
+            "comments": [{
+                "id": comment.id,
+                "post_id": comment.post_id,
+                "content": comment.content,
+                "content_timestamp": comment.content_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            } for comment in post.comments]
+        }

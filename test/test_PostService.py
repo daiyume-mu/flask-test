@@ -1,18 +1,22 @@
 import sys
 sys.path.append('D:/file/flask-todo-app/develop')
+from services.tag_service import TagService
 from flask import Flask
 from datetime import datetime
-from models.post import Post, db
-from models.user import User
+from models.post import Post, PostModel, db
+from models.user import User, UserModel
 from models.tag import Tag, TagModel
 from models.comment import Comment
 from services.post_service import PostService
 from services.user_service import UserService
 import unittest
 
-postservice = PostService(db.session)
-tagservice = TagModel(db.session)
-userservice = UserService(db.session)
+postmodel = PostModel(db.session)
+postservice = PostService(postmodel)
+tagmodel = TagModel(db.session)
+tagservice = TagService(tagmodel)
+usermodel = UserModel(db.session)
+userservice = UserService(usermodel)
 
 class Test_PostService(unittest.TestCase):
 
@@ -142,6 +146,22 @@ class Test_PostService(unittest.TestCase):
             postservice.delete_post(id)
             new_count = Post.query.count()
             self.assertEqual(new_count, first_count - 1)
+
+            db.session.rollback()
+
+
+    def test_serialize_post(self):
+        with self.app.app_context():
+            title = "test"
+            detail = "Test Detail"
+            due = "2023-10-20"
+            post = postservice.create_post(title, detail, due)
+
+            serialized_post = postservice.serialize_post(post)
+            self.assertEqual(serialized_post['id'], post.id)
+            self.assertEqual(serialized_post['title'], title)
+            self.assertEqual(serialized_post['detail'], detail)
+            self.assertEqual(serialized_post['due'], '2023-10-20 00:00:00')
 
             db.session.rollback()
 

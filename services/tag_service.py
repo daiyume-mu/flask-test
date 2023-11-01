@@ -30,6 +30,13 @@ class TagService:
     def tag_clear(self, post):
         self.repository.tag_clear(post)
 
+
+    def serialize_tag(self, tag):
+        return {
+            "id": tag.id,
+            "tag_neme" : tag.tag_name
+        }
+
 #associateするだけの関数を作る
 #addするだけの関数を作る
 #modelのりファクタは後で教えるからいい

@@ -31,3 +31,10 @@ class UserService:
         if user_id:
             return self.repository.get_user_by_id(user_id)
         return None
+    
+
+    def serialize_user(self, user):
+        return {
+            "id": user.id,
+            "email": user.email
+    	}
