@@ -1,14 +1,20 @@
 from flask import Blueprint, render_template, request, redirect
+from models.user import UserModel
 from services.post_service import PostService
+from models.tag import TagModel
 from services.tag_service import TagService
 from services.user_service import UserService
-from models.post import db
+from models.post import PostModel, db
 
 
 post_blueprint = Blueprint('todo', __name__)
-postservice = PostService(db.session)
-tagservice = TagService(db.session)
-userservice = UserService(db.session)
+
+postmodel = PostModel(db.session)
+postservice = PostService(postmodel)
+tagmodel = TagModel(db.session)
+tagservice = TagService(tagmodel)
+usermodel = UserModel(db.session)
+userservice = UserService(usermodel)
 
 @post_blueprint.route('/')
 def index():
@@ -33,7 +39,8 @@ def store():
     user = userservice.get_current_user(user_id)
     if not user:
         return redirect('/login')
-    post = postservice.create_post(title, detail, due, user)
+    post = postservice.create_post(title, detail, due)
+    postservice.associate_user(post, user)
     tagservice.associate_tags(post, tag_id)
     return redirect('/')
     
