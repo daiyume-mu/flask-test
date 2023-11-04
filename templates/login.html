@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="form">
+    <form action="/login_check" method="POST">
+        <label for="email">メールアドレス</label>
+        <input type="text" name="email">
+        <label for="password">パスワード</label>
+        <input type="text" name="password">
+        <input type="submit" value="Login">
+    </form>
+</div>
+<a href="/sign_up" role="button">サインアップ</a>
+{% endblock %}

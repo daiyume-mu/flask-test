@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>記事一覧</h1>
+{% if posts %}
+    <h2>{{ posts[0].tags.tag_name }}</h2>
+    {% for post in posts %}
+    <h2>タイトル : <a href="/detail/{{ post.id }}" >{{ post.title }}</a></h2>
+    <p>期限 : {{ post.due.date() }}</p>
+    {% endfor %}
+{% else %}
+    <p>このタグに関連する投稿はありません。</p>
+{% endif %}
+{% endblock %}
